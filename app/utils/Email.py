@@ -1,6 +1,5 @@
 import os
 from dotenv import load_dotenv
-from utils.utils import loggin
 from botcity.plugins.email import BotEmailPlugin, MailServers
 
 
