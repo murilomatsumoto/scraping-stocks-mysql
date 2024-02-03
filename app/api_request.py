@@ -32,24 +32,34 @@ class ApiStocks():
 
 
     @staticmethod
-    def update_stock_price(id_stock, price):
+    def update_stock_price(id_stock, info):
         url_update_fundamentus = f'http://localhost:8000/stockprices/'
         data_atual = datetime.today()
         data_formatada = data_atual.strftime('%Y-%m-%d')
-        print(data_formatada)
         
         json_update = {
         "date": data_formatada,
-        "price": float(price.replace(',', '.')),
-        "stock": id_stock
+        "price": float(info[1].replace(',', '.')),
+        "stock": id_stock,
+        "p_l": float(info[2].replace('.', '').replace(',', '.')),
+        "p_vp": float(info[3].replace('.', '').replace(',', '.')),
+        "dividend_y": float(info[5].replace('.', '').replace(',', '.').replace('%', '')),
         }
         print(json_update)
         response = requests.post(url_update_fundamentus, json=json_update)
+
         print(response.status_code)
         if response.status_code == 201:
             print(f'preço da ação do dia {data_formatada} cadastrado com sucesso')
-        else:
-            print(response.json())
+        elif response.status_code == 400:
+            error_response = response.json()
+            print(error_response)
+            result_error = error_response['non_field_errors']
+            if result_error[0] == 'The fields stock, date must make a unique set.':
+                url_update_date_stock = f'{url_update_fundamentus}{id_stock}/{data_formatada}/'
+                response = requests.put(url_update_date_stock, json=json_update)
+                if response.status_code == 200:
+                    print(f'preço da ação do dia {data_formatada} atualizado com sucesso')
             
 # json_data = {'name': "", 'ticker': 'ITUB3'}
 # ApiStocks.api_post(json_data=json_data, ticker=json_data['ticker'])

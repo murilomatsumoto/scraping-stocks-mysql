@@ -44,11 +44,14 @@ def main():
             for dicio in dict_table_ativos:
                 info = tuple(dicio.values())     
                 try:
+                    print(info)
                     json_data = {'name': "", 'ticker': info[0]}
                     # print(json_data)
                     id_stock = ApiStocks.api_post(json_data=json_data,  ticker=json_data['ticker'])
+                    
                     if id_stock:
-                        ApiStocks.update_stock_price(id_stock=id_stock, price=info[1])
+                        
+                        ApiStocks.update_stock_price(id_stock=id_stock, info=info)
                         
                         
                 except:
